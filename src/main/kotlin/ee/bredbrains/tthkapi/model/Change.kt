@@ -32,7 +32,7 @@ class Change {
     companion object Factory {
         private const val DATE_PATTERN = "dd.MM.yyyy"
 
-        private const val DATE_INDEX = 1
+        const val DATE_INDEX = 1
         private const val GROUP_INDEX = 2
         private const val LESSONS_INDEX = 3
         private const val TEACHER_INDEX = 4

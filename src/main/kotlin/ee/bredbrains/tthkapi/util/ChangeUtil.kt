@@ -1,6 +1,7 @@
 package ee.bredbrains.tthkapi.util
 
 import ee.bredbrains.tthkapi.model.ChangeStatus
+import java.util.regex.Pattern
 
 object ChangeUtil {
     private val statusTriggers = mapOf(
@@ -12,7 +13,15 @@ object ChangeUtil {
         "tunnid toimuvad" to ChangeStatus.SCHEDULED,
     )
 
-    fun determineStatus(status: String) = statusTriggers.getOrDefault(status.lowercase(), ChangeStatus.DROPPED_OUT)
+    fun determineStatus(status: String): ChangeStatus {
+        val statusByDefault = ChangeStatus.DROPPED_OUT
+        val key = statusTriggers.keys.first { status.lowercase().contains(it) }
+        return statusTriggers.getOrDefault(key, statusByDefault)
+    }
 
-    fun isStatus(status: String) = statusTriggers.containsKey(status.lowercase())
+    fun isStatus(status: String): Boolean {
+        return statusTriggers.keys.any { status.lowercase().contains(it) }
+    }
+
+    const val CHANGES_URL = "https://www.tthk.ee/tunniplaani-muudatused/"
 }
