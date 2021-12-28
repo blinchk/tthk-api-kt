@@ -1,17 +1,21 @@
 package ee.bredbrains.tthkapi.model
 
+import org.hibernate.annotations.GenericGenerator
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name="update_times")
-class UpdateTime {
+class UpdateTime() {
+    constructor(tableName: String, date: Date) : this() {
+        this.tableName = tableName
+        this.date = date
+    }
+
     @Id
-    @Column(name = "id", nullable = false)
-    var id: UUID? = null
-    var table: String? = null
-    var updateTime: Date? = null
+    @Column(name = "id", nullable = false, updatable = false)
+    @GenericGenerator(name = "uuid", strategy = "uuid4")
+    var id: String = UUID.randomUUID().toString()
+    var tableName: String? = null
+    var date: Date? = null
 }

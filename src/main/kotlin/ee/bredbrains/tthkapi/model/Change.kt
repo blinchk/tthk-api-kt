@@ -2,22 +2,24 @@ package ee.bredbrains.tthkapi.model
 
 import ee.bredbrains.tthkapi.util.ChangeUtil.determineStatus
 import ee.bredbrains.tthkapi.util.ChangeUtil.isStatus
+import org.hibernate.annotations.GenericGenerator
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
-@Table(name = "changes")
+@Table(name = Change.tableName)
 @Entity
 class Change {
     @Id
-    @Column(nullable = false)
-    var id: UUID? = null
+    @Column(name = "id", nullable = false, updatable = false)
+    @GenericGenerator(name = "uuid", strategy = "uuid4")
+    var id: String = UUID.randomUUID().toString()
     var date = Date()
-    var group = ""
+    @Column(name = "thkgroup") var group = ""
     var lessons = ""
     var teacher = ""
-    lateinit var room: String
-    lateinit var status: ChangeStatus
+    var room: String? = null
+    var status: ChangeStatus? = null
 
     fun assignStatus(statusTrigger: String) {
         if (isStatus(statusTrigger)) {
@@ -27,17 +29,21 @@ class Change {
         }
     }
 
-    fun dateEquals(date: Date) = this.date == date
-    
-    companion object Factory {
-        private const val DATE_PATTERN = "dd.MM.yyyy"
+    companion object : UpdatableEntityCompanion {
+        const val tableName = "changes"
+        override fun tableName(): String {
+            return tableName
+        }
+    }
 
+    object Factory {
+        private const val DATE_PATTERN = "dd.MM.yyyy"
         const val DATE_INDEX = 1
         private const val GROUP_INDEX = 2
         private const val LESSONS_INDEX = 3
         private const val TEACHER_INDEX = 4
-        private const val ROOM_INDEX = 5
 
+        private const val ROOM_INDEX = 5
         fun fromList(parts: Array<String>): Change {
             return Change().apply {
                 date = SimpleDateFormat(DATE_PATTERN).parse(parts[DATE_INDEX])

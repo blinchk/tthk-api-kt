@@ -9,6 +9,8 @@ object ChangeUtil {
         "söögivahetund" to ChangeStatus.LUNCH,
         "jääb ära" to ChangeStatus.DROPPED_OUT,
         "iseseisev ülesanne kodus" to ChangeStatus.HOMEWORK,
+        "iseseisev ülesanne kodus(vt tahvel)" to ChangeStatus.HOMEWORK,
+        "iseseisev ülesanne kodus(vt tahvlis)" to ChangeStatus.HOMEWORK,
         "iseseisev töö kodus" to ChangeStatus.HOMEWORK,
         "tunnid toimuvad" to ChangeStatus.SCHEDULED,
     )

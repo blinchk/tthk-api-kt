@@ -6,8 +6,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 
-class ChangeParserClient : ParserClient<Change> {
-    override fun parse(url: String): List<Change> {
+class ChangeParserClient : ParserClient<Change>() {
+    override fun parse(urls: List<String>): List<Change> {
+        return parse(urls.first())
+    }
+
+    private fun parse(url: String): List<Change> {
         val document: Document = Jsoup.connect(url).get()
         val tables = parseTables(document)
         return processTables(tables)
@@ -21,13 +25,13 @@ class ChangeParserClient : ParserClient<Change> {
 
     private fun processRows(rows: Elements): List<Change> {
         val changes = ArrayList<Change>()
-        rows.forEach { processCells(parseTableCells(it))?.let { change -> changes.add(change) } }
+        rows.forEach { processCells(parseTableCells(it))?.let { it1 -> changes.add(it1) } }
         return changes
     }
 
     private fun processCells(cells: Elements): Change? {
         val parts = cells.eachText().toTypedArray()
         if (parts[DATE_INDEX] == "Kuupäev") return null
-        return Change.fromList(parts)
+        return Change.Factory.fromList(parts)
     }
 }
