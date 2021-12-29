@@ -16,8 +16,8 @@ class Change {
     var id: String = UUID.randomUUID().toString()
     var date = Date()
     @Column(name = "thkgroup") var group = ""
-    var lessons = ""
-    var teacher = ""
+    var lessons: String? = null
+    var teacher: String? = null
     var room: String? = null
     var status: ChangeStatus? = null
 
