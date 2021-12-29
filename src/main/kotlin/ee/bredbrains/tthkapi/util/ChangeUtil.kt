@@ -1,7 +1,11 @@
 package ee.bredbrains.tthkapi.util
 
+import ee.bredbrains.tthkapi.model.Change
 import ee.bredbrains.tthkapi.model.ChangeStatus
-import java.util.regex.Pattern
+import ee.bredbrains.tthkapi.util.CalendarUtil.setDefaults
+import java.text.SimpleDateFormat
+import java.time.ZoneOffset
+import java.util.*
 
 object ChangeUtil {
     private val statusTriggers = mapOf(
@@ -26,4 +30,13 @@ object ChangeUtil {
     }
 
     const val CHANGES_URL = "https://www.tthk.ee/tunniplaani-muudatused/"
+
+    fun parseDate(date: String): Date {
+        val simpleDateFormat = SimpleDateFormat(Change.Factory.DATE_PATTERN)
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("Europe/Tallinn")
+        val calendar = Calendar.getInstance()
+        calendar.time = simpleDateFormat.parse(date)
+        calendar.setDefaults()
+        return calendar.time
+    }
 }

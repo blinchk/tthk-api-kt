@@ -1,7 +1,6 @@
 package ee.bredbrains.tthkapi.client
 
 import ee.bredbrains.tthkapi.model.Change
-import ee.bredbrains.tthkapi.model.Change.Factory.DATE_INDEX
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -11,7 +10,7 @@ class ChangeParserClient : ParserClient<Change>() {
         return parse(urls.first())
     }
 
-    private fun parse(url: String): List<Change> {
+    fun parse(url: String): List<Change> {
         val document: Document = Jsoup.connect(url).get()
         val tables = parseTables(document)
         return processTables(tables)
@@ -31,7 +30,6 @@ class ChangeParserClient : ParserClient<Change>() {
 
     private fun processCells(cells: Elements): Change? {
         val parts = cells.eachText().toTypedArray()
-        if (parts[DATE_INDEX] == "Kuupäev") return null
         return Change.Factory.fromList(parts)
     }
 }

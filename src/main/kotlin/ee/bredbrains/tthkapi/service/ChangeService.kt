@@ -13,7 +13,7 @@ class ChangeService(private val changeRepository: ChangeRepository, private val 
         return if (isUpdateRequired) updateAndGetLatestChanges() else changeRepository.findAll()
     }
 
-    fun byDate(date: Date): List<Change> {
+    fun allByDate(date: Date): List<Change> {
         return if (isUpdateRequired) updateAndGetLatestChanges(date) else changeRepository.findAllByDate(date)
     }
 
