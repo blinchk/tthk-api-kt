@@ -1,13 +1,15 @@
 package ee.bredbrains.tthkapi.client
 
 import ee.bredbrains.tthkapi.model.Change
+import ee.bredbrains.tthkapi.model.ParsableUrls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 
 class ChangeParserClient : ParserClient<Change>() {
-    override fun parse(urls: List<String>): List<Change> {
-        return parse(urls.first())
+    override fun parse(urls: ParsableUrls): List<Change> {
+        val firstUrl = urls.values.first()
+        return parse(firstUrl)
     }
 
     fun parse(url: String): List<Change> {

@@ -2,13 +2,15 @@ package ee.bredbrains.tthkapi.service
 
 import ee.bredbrains.tthkapi.client.ChangeParserClient
 import ee.bredbrains.tthkapi.model.Change
+import ee.bredbrains.tthkapi.model.ParsableUrls
+import ee.bredbrains.tthkapi.model.UpdatableEntityCompanion
 import ee.bredbrains.tthkapi.repository.ChangeRepository
-import ee.bredbrains.tthkapi.util.ParserUtil
+import ee.bredbrains.tthkapi.util.ChangeUtil.CHANGES_URL
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ChangeService(private val changeRepository: ChangeRepository, private val updateTimeService: UpdateTimeService) {
+class ChangeService(private val changeRepository: ChangeRepository, updateTimeService: UpdateTimeService): UpdatableEntityService<Change>(updateTimeService, changeRepository) {
     fun all(): List<Change> {
         return if (isUpdateRequired) updateAndGetLatestChanges() else changeRepository.findAll()
     }
@@ -37,15 +39,10 @@ class ChangeService(private val changeRepository: ChangeRepository, private val 
 
     private fun updateChanges() {
         captureLastUpdateTime()
-        val changes = ChangeParserClient().parse(listOf(ParserUtil.CHANGES_URL))
+        val urls = ParsableUrls(null, CHANGES_URL)
+        val changes = ChangeParserClient().parse(urls)
         changeRepository.saveAll(changes)
     }
 
-    private fun captureLastUpdateTime() {
-        updateTimeService.captureLastUpdateTime(Change)
-    }
-
-    private val isDeprecated: Boolean get() = updateTimeService.isDeprecated(Change)
-    private val isEmpty: Boolean get() = changeRepository.findAll().isEmpty()
-    private val isUpdateRequired: Boolean get() = isEmpty || isDeprecated
+    override val companion: UpdatableEntityCompanion get() = Change.Companion
 }

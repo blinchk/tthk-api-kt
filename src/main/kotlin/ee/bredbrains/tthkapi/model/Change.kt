@@ -14,7 +14,7 @@ import javax.persistence.Table
 
 @Table(name = Change.tableName)
 @Entity
-class Change {
+class Change : UpdatableEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GenericGenerator(name = "uuid", strategy = "uuid4")
