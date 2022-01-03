@@ -10,38 +10,24 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ChangeService(private val changeRepository: ChangeRepository, updateTimeService: UpdateTimeService): UpdatableEntityService<Change>(updateTimeService, changeRepository) {
-    fun all(): List<Change> {
-        return if (isUpdateRequired) updateAndGetLatestChanges() else changeRepository.findAll()
+class ChangeService(
+    private val changeRepository: ChangeRepository,
+    updateTimeService: UpdateTimeService,
+) : UpdatableEntityService<Change, UUID>(updateTimeService,
+    changeRepository,
+    ChangeParserClient(),
+    ParsableUrls(null, CHANGES_URL)) {
+    fun findAllByDate(date: Date): List<Change> {
+        return if (isUpdateRequired) updateAndGetLatest(date) else changeRepository.findAllByDate(date)
     }
 
-    fun allByDate(date: Date): List<Change> {
-        return if (isUpdateRequired) updateAndGetLatestChanges(date) else changeRepository.findAllByDate(date)
+    private fun updateAndGetLatest(date: Date): List<Change> {
+        update()
+        return getLatestByDate(date)
     }
 
-    private fun updateAndGetLatestChanges(): List<Change> {
-        updateChanges()
-        return getLatestChanges()
-    }
-
-    private fun updateAndGetLatestChanges(date: Date): List<Change> {
-        updateChanges()
-        return getLatestChangesByDate(date)
-    }
-
-    private fun getLatestChanges(): List<Change> {
-        return changeRepository.findAll()
-    }
-
-    private fun getLatestChangesByDate(date: Date): List<Change> {
+    private fun getLatestByDate(date: Date): List<Change> {
         return changeRepository.findAllByDate(date)
-    }
-
-    private fun updateChanges() {
-        captureLastUpdateTime()
-        val urls = ParsableUrls(null, CHANGES_URL)
-        val changes = ChangeParserClient().parse(urls)
-        changeRepository.saveAll(changes)
     }
 
     override val companion: UpdatableEntityCompanion get() = Change.Companion

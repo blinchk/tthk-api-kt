@@ -21,6 +21,6 @@ class ChangeController(private val changeService: ChangeService) {
         @PathVariable date: String
     ): List<Change> {
         val date = ChangeUtil.parseDate(date)
-        return changeService.allByDate(date)
+        return changeService.findAllByDate(date)
     }
 }

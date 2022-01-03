@@ -1,9 +1,10 @@
 package ee.bredbrains.tthkapi.util
 
 import ee.bredbrains.tthkapi.model.Department
+import ee.bredbrains.tthkapi.model.ParsableUrls
 
 object ConsultationUtil {
-    val CONSULTATION_URLS = mapOf<Department?, String>(
+    val CONSULTATION_URLS = ParsableUrls(
         Department.GENERAL_SUBJECTS to "https://www.tthk.ee/oppetoo/opetajate-konsultatsioonid/uldainete-konsultatsioonid/",
         Department.TRANSPORT to "https://www.tthk.ee/oppetoo/opetajate-konsultatsioonid/transporditehnika-valdkonna-konsultatsioonid/",
         Department.MECHANICS to "https://www.tthk.ee/oppetoo/opetajate-konsultatsioonid/mehaanika-ja-metallitootluse-valdkonna-konsultatsioonid/",
