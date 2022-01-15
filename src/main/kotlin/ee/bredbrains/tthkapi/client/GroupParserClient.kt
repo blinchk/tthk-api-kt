@@ -14,5 +14,4 @@ class GroupParserClient : ParserClient<Group>() {
         val parts = cells.eachText().toTypedArray()
         return Group.Factory.fromList(parts)
     }
-
 }
