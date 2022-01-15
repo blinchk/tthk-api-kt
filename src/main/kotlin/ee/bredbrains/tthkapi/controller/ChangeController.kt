@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/changes")
 class ChangeController(private val changeService: ChangeService) : BaseEntityController<Change>(changeService) {
-    @GetMapping("/{date}")
+    @GetMapping("/{_date}")
     fun byDate(
-        @PathVariable date: String
+        @PathVariable _date: String
     ): List<Change> {
-        return changeService.all(ChangeUtil.parseDate(date))
+        val date = ChangeUtil.parseDate(_date)
+        return changeService.all(date)
     }
 }

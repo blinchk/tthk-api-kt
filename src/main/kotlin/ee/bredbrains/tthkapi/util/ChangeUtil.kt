@@ -1,10 +1,11 @@
 package ee.bredbrains.tthkapi.util
 
+import ee.bredbrains.tthkapi.exception.InvalidDateException
 import ee.bredbrains.tthkapi.model.Change
 import ee.bredbrains.tthkapi.model.ChangeStatus
 import ee.bredbrains.tthkapi.util.CalendarUtil.setDefaults
+import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.ZoneOffset
 import java.util.*
 
 object ChangeUtil {
@@ -35,7 +36,11 @@ object ChangeUtil {
         val simpleDateFormat = SimpleDateFormat(Change.Factory.DATE_PATTERN)
         simpleDateFormat.timeZone = TimeZone.getTimeZone("Europe/Tallinn")
         val calendar = Calendar.getInstance()
-        calendar.time = simpleDateFormat.parse(date)
+        try {
+            calendar.time = simpleDateFormat.parse(date)
+        } catch (e: ParseException) {
+            throw InvalidDateException(date)
+        }
         calendar.setDefaults()
         return calendar.time
     }
