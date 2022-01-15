@@ -13,22 +13,18 @@ import java.util.*
 class ChangeService(
     private val changeRepository: ChangeRepository,
     updateTimeService: UpdateTimeService,
-) : UpdatableEntityService<Change, UUID>(updateTimeService,
+) : UpdatableEntityService<Change>(
+    updateTimeService,
     changeRepository,
     ChangeParserClient(),
-    ParsableUrls(null, CHANGES_URL)) {
-    fun findAllByDate(date: Date): List<Change> {
-        return if (isUpdateRequired) updateAndGetLatest(date) else changeRepository.findAllByDate(date)
-    }
-
-    private fun updateAndGetLatest(date: Date): List<Change> {
-        update()
-        return getLatestByDate(date)
-    }
-
-    private fun getLatestByDate(date: Date): List<Change> {
-        return changeRepository.findAllByDate(date)
-    }
-
+    ParsableUrls(null, CHANGES_URL)
+) {
     override val companion: UpdatableEntityCompanion get() = Change.Companion
+    override fun <F> getLatest(arg: F): List<Change> {
+        if (arg is Date) {
+            return changeRepository.findAllByDate(arg as Date)
+        } else {
+            throw IllegalArgumentException()
+        }
+    }
 }

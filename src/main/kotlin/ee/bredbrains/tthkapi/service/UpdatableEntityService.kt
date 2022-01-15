@@ -4,21 +4,21 @@ import ee.bredbrains.tthkapi.client.ParserClient
 import ee.bredbrains.tthkapi.model.ParsableUrls
 import ee.bredbrains.tthkapi.model.UpdatableEntity
 import ee.bredbrains.tthkapi.model.UpdatableEntityCompanion
-import org.springframework.data.jpa.repository.JpaRepository
+import ee.bredbrains.tthkapi.repository.BaseEntityRepository
 
-abstract class UpdatableEntityService<T, K>(
+abstract class UpdatableEntityService<T>(
     private val updateTimeService: UpdateTimeService,
-    private val repository: JpaRepository<T, K>,
+    private val repository: BaseEntityRepository<T>,
     private val parserClient: ParserClient<T>,
     private val urls: ParsableUrls
-) where T : UpdatableEntity {
+) : BaseEntityService<T>() where T : UpdatableEntity {
     abstract val companion: UpdatableEntityCompanion
     private val isDeprecated: Boolean get() = updateTimeService.isDeprecated(companion)
     private val isEmpty: Boolean get() = repository.findAll().isEmpty()
-    val isUpdateRequired: Boolean get() = isEmpty || isDeprecated
+    private val isUpdateRequired: Boolean get() = isEmpty || isDeprecated
 
-    fun all(): List<T> {
-        return if (isUpdateRequired) updateAndGetLatest() else repository.findAll()
+    override fun all(): List<T> {
+        return if (isUpdateRequired) updateAndGetLatest() else getLatest()
     }
 
     private fun captureLastUpdateTime() {
@@ -29,7 +29,7 @@ abstract class UpdatableEntityService<T, K>(
         return repository.findAll()
     }
 
-    fun update() {
+    private fun update() {
         captureLastUpdateTime()
         val data = parserClient.parse(urls)
         repository.saveAll(data)
@@ -40,4 +40,14 @@ abstract class UpdatableEntityService<T, K>(
         return getLatest()
     }
 
+    fun <F> all(arg: F): List<T> {
+        return if (isUpdateRequired) updateAndGetLatest(arg) else getLatest(arg)
+    }
+
+    private fun <F> updateAndGetLatest(arg: F): List<T> {
+        update()
+        return getLatest(arg)
+    }
+
+    internal abstract fun <F> getLatest(arg: F): List<T>
 }

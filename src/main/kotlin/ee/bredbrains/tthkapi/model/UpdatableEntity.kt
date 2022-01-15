@@ -1,3 +1,3 @@
 package ee.bredbrains.tthkapi.model
 
-interface UpdatableEntity
+abstract class UpdatableEntity : BaseEntity()

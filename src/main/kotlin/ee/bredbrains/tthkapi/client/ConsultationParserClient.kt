@@ -7,7 +7,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 
-class ConsultationParserClient : ParserClient<Consultation>() {
+class ConsultationParserClient : ArgumentParserClient<Consultation, Department>() {
     override fun parse(urls: ParsableUrls): List<Consultation> {
         val consultations = ArrayList<Consultation>()
         urls.forEach { url -> consultations += parse(url.value, url.key!!) }
@@ -21,7 +21,7 @@ class ConsultationParserClient : ParserClient<Consultation>() {
         return consultations
     }
 
-    private fun processTables(tables: Elements, department: Department) : List<Consultation> {
+    private fun processTables(tables: Elements, department: Department): List<Consultation> {
         val consultations = ArrayList<Consultation>()
         tables.forEach { consultations += processRows(parseTableRows(it), department) }
         return consultations
@@ -29,12 +29,12 @@ class ConsultationParserClient : ParserClient<Consultation>() {
 
     private fun processRows(rows: Elements, department: Department): List<Consultation> {
         val consultations = ArrayList<Consultation>()
-        rows.forEach { consultations += processCells(parseTableCells(it), department)}
+        rows.forEach { consultations += processCells(parseTableCells(it), department) }
         return consultations
     }
 
-    private fun processCells(cells: Elements, department: Department): List<Consultation> {
-        val parts = cells.eachText().toTypedArray()
-        return Consultation.Factory.fromList(parts, department)
+    override fun processCells(cells: Elements, arg: Department): List<Consultation> {
+        val parts = cells.map { cell -> cell.text() }.toTypedArray()
+        return Consultation.Factory.fromList(parts, arg)
     }
 }

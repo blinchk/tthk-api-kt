@@ -14,5 +14,8 @@ object GroupUtil {
         return if (isRussian > isEstonian) Language.RUSSIAN else Language.ESTONIAN
     }
 
-    private fun getTriggerPosition(code: String, trigger: Char) = code.substring(0..SEARCH_LAST_INDEX).lastIndexOf(trigger)
+    private fun getTriggerPosition(code: String, trigger: Char) =
+        code.substring(0..SEARCH_LAST_INDEX).lastIndexOf(trigger)
+
+    const val GROUPS_URL = "https://www.tthk.ee/oppetoo/tunniplaan/ruhmajuhatajad/"
 }
